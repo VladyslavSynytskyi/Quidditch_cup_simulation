@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Denmark",
+    "players": [
+      {
+        "name": "chaser 1",
+        "role": "Chaser",
+        "skill": 2
+      },
+      {
+        "name": "chaser 2",
+        "role": "Chaser",
+        "skill": 10
+      },
+      {
+        "name": "chaser 3",
+        "role": "Chaser",
+        "skill": 4
+      },
+      {
+        "name": "beater 1",
+        "role": "Beater",
+        "skill": 6
+      },
+      {
+        "name": "beater 2",
+        "role": "Beater",
+        "skill": 4
+      },
+      {
+        "name": "keeper",
+        "role": "Keeper",
+        "skill": 10
+      },
+      {
+        "name": "seeker",
+        "role": "Seeker",
+        "skill": 8
+      }
+    ]
+  },
+  {
+    "name": "South Korea",
+    "players": [
+      {
+        "name": "chaser 1",
+        "role": "Chaser",
+        "skill": 3
+      },
+      {
+        "name": "chaser 2",
+        "role": "Chaser",
+        "skill": 4
+      },
+      {
+        "name": "chaser 3",
+        "role": "Chaser",
+        "skill": 2
+      },
+      {
+        "name": "beater 1",
+        "role": "Beater",
+        "skill": 4
+      },
+      {
+        "name": "beater 2",
+        "role": "Beater",
+        "skill": 4
+      },
+      {
+        "name": "keeper",
+        "role": "Keeper",
+        "skill": 9
+      },
+      {
+        "name": "seeker",
+        "role": "Seeker",
+        "skill": 7
+      }
+    ]
+  }
+]
