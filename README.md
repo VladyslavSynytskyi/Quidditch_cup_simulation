@@ -1,6 +1,6 @@
 # Quidditch Cup Simulation
 
-This project provides a simple command-line simulation of Quidditch matches and tournaments written in Python. You can create teams, manage players, run individual matches, or stage full tournaments with randomly generated countries.
+This project provides a simple command-line simulation of Quidditch matches and tournaments written in Python. You can create teams, manage players, run individual matches, or stage full tournaments with either Hogwarts houses or randomly selected countries.
 
 ## Features
 

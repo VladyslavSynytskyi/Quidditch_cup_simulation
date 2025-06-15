@@ -90,7 +90,15 @@ def main():
             if skill_choice == "y":
                 skill = random.randint(1, 10)
             else:
-                skill = int(input("Enter skill level (1-10): ").strip())
+                try:
+                    input_skill = int(input("Enter skill level (1-10): ").strip())
+                    skill = input_skill if input_skill >= 1 and input_skill <= 10 else None
+                    if not skill:
+                        print("Skill should be between 1 and 10.")
+                        continue
+                except ValueError:
+                    print("Please enter a number.")
+                    continue
             idx = team.count_role(role) + 1
             player = Player(player_name or f"{role} {idx}", role, skill)
             if team.add_player(player):
@@ -148,9 +156,13 @@ def main():
             simulate_match(team1, team2)
 
         elif choice == "9":
-            number_of_teams = int(input("How many teams do you want to simulate? (4/16/32/64): ").strip())
+            try:
+                number_of_teams = int(input("How many teams do you want to simulate? (4/16/32/64): ").strip())
+            except ValueError:
+                print("Please enter a valid number (4, 16, 32, or 64).")
+                continue
             if number_of_teams not in [4, 16, 32, 64]:
-                print("Invalid number of teams.")
+                print("Invalid number of teams. Please enter 4, 16, 32, or 64.")
                 continue
             if number_of_teams == 4:
                 tournament_4_teams()
