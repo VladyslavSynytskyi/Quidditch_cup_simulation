@@ -18,7 +18,7 @@ def apply_weather(team1, team2):
             weather = w
             break
     else:
-        ValueError("No weather option found.")
+        raise ValueError("No weather option found.")
     # Everyone gets the same delta
     result = {}
     for p in team1.players + team2.players:
@@ -156,7 +156,7 @@ def apply_weather_timeouts(weather_type, team1, team2):
         desc.append(f"Water break: {t_len} minutes after every {per_attacks} attacks (Sunny)")
     elif weather_type == "Rainy":
         t_len = random.randint(5, 60)
-        out['timeouts'].append({'start': per_attacks, 'length': t_len, 'condition': "Rainy"})
+        out['timeouts'].append({'per_attacks': per_attacks, 'length': t_len, 'condition': "Rainy"})
         desc.append(f"Lightning risk timeout: {t_len} minutes every {per_attacks} attacks (Rainy)")
     elif weather_type == "Windy":
         # All beaters get -1 skill

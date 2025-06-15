@@ -233,7 +233,7 @@ def simulate_match(team1, team2):
                     else:
                         highlights.append(f"{time}': Penalty for {penalty_team.name}! {chaser.name} vs {keeper.name}: SAVED by {keeper.name}!")
                 else:
-                    ValueError("No chasers?!")
+                    raise ValueError("No chasers?!")
 
             # Schedule next penalty check
             next_penalty_attack += random.randint(1, 10)
