@@ -177,6 +177,8 @@ def simulate_match(team1, team2):
 
                 # Time skipped (5 to max), max doubles each timeout
                 max_skip = 15 * (2 ** (timeout_count - 1))
+                if max_skip > 600:
+                    max_skip = 600
                 skip_minutes = random.randint(5, max_skip)
                 time += skip_minutes
                 highlights.append(
