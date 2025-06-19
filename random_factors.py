@@ -101,7 +101,7 @@ def apply_injuries(team1, team2):
             f"{player.name} ({team1.name if player in team1.players else team2.name}, {player.role}) injured: {severity}"
         )
 
-    return result, "Injuries: " + "; ".join(descs)
+    return result, f"{num_injuries} player(s) injured: {', '.join(descs)}"
 
 def apply_bludger_mayhem():
     # 10% chance for Bludger Mayhem
@@ -200,15 +200,15 @@ def apply_all_factors(team1, team2):
     for pid, delta in crowd2_result.items():
         player_deltas[pid].append(delta)
 
+    # Referee bias
+    ref_bias, ref_bias_desc = apply_referee_bias(team1, team2)
+    descriptions.append(ref_bias_desc)
+
     # Faulty Brooms
     broom_result, broom_desc = apply_faulty_brooms(team1, team2)
     descriptions.append(broom_desc)
     for pid, delta in broom_result.items():
         player_deltas[pid].append(delta)
-
-    # Referee bias
-    ref_bias, ref_bias_desc = apply_referee_bias(team1, team2)
-    descriptions.append(ref_bias_desc)
 
     # Injuries
     injuries_result, injuries_desc = apply_injuries(team1, team2)
