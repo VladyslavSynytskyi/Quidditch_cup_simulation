@@ -78,6 +78,24 @@ def simulate_match(team1, team2):
         step = random.randint(min_step, max_step)
         time += step
 
+        # Snitch logic 
+        if total_seeker_skill > 0:
+            snitch_threshold = total_seeker_skill * 0.001
+            if random.random() < snitch_threshold:
+                snitch_caught = True
+                # Determine who caught it
+                winner = random.randint(1, total_seeker_skill)
+                if winner <= team1_seeker_skill:
+                    team1_score += 150
+                    snitch_catcher = team1_sim.name
+                    highlights.append(f"{time}': {team1_sim.name}'s Seeker catches the Snitch! (+150 points)")
+                    continue
+                else:
+                    team2_score += 150
+                    snitch_catcher = team2_sim.name
+                    highlights.append(f"{time}': {team2_sim.name}'s Seeker catches the Snitch! (+150 points)")
+                    continue
+
         # -- Timeout break logic (only for Cloudy, Sunny, Rainy) --
         if next_timeout_break and attack_counter > 0 and attack_counter % next_timeout_break == 0:
             if condition == "Cloudy":
@@ -185,7 +203,7 @@ def simulate_match(team1, team2):
                     f"{time}': Strategic timeout! {calling_team.name} calls it. "
                     f"Boosts: {calling_team.name} (+2 for {call_team_duration} attacks), "
                     f"{other_team.name} (+1 for {opp_team_duration} attacks). "
-                    f"Play resumes after {skip_minutes} min."
+                    f"Play resumed after {skip_minutes} min."
                 )
             # Set next strategic timeout
             next_strategic_timeout_attack += random.randint(10, 20)
@@ -239,22 +257,6 @@ def simulate_match(team1, team2):
 
             # Schedule next penalty check
             next_penalty_attack += random.randint(1, 10)
-
-        # Snitch logic 
-        if total_seeker_skill > 0:
-            snitch_threshold = total_seeker_skill * 0.001
-            if random.random() < snitch_threshold:
-                snitch_caught = True
-                # Determine who caught it
-                winner = random.randint(1, total_seeker_skill)
-                if winner <= team1_seeker_skill:
-                    team1_score += 150
-                    snitch_catcher = team1_sim.name
-                    highlights.append(f"{time}': {team1_sim.name}'s Seeker catches the Snitch! (+150 points)")
-                else:
-                    team2_score += 150
-                    snitch_catcher = team2_sim.name
-                    highlights.append(f"{time}': {team2_sim.name}'s Seeker catches the Snitch! (+150 points)")
 
     # Print factors in the result section:
     print("\n--- Random Factors Applied ---")
