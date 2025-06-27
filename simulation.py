@@ -16,7 +16,7 @@ def get_defense_value(team, boost = 0):
 def get_seeker_skill(team):
     return next(p.skill for p in team.players if p.role == "Seeker")
 
-def simulate_match(team1, team2):
+def simulate_match(team1, team2, time_limit = None):
 
     # Deep copy for temp modification
     team1_sim = copy.deepcopy(team1)
@@ -74,9 +74,37 @@ def simulate_match(team1, team2):
         condition = timeout_breaks[0]['condition']
 
     while not snitch_caught:
+        
         # Advance time randomly
         step = random.randint(min_step, max_step)
         time += step
+
+        if time_limit:
+            if time > time_limit:
+                time = time_limit
+                # Print factors in the result section:
+                print("\n--- Random Factors Applied ---")
+                for f in applied_factors:
+                    print(f)
+
+                # Output results
+                print("\n--- Match Result ---")
+                print(f"{team1_sim.name}: {team1_score} - {team2_sim.name}: {team2_score}")
+                print("Snitch was not caught (time ran out).")
+                print(f"Total match time: {time} minutes")
+
+                print("\n--- Match Statistics ---")
+                print(f"{team1_sim.name}: {team1_attacks} attacks, {team1_goals} goals, {team2_saves} misses")
+                print(f"{team2_sim.name}: {team2_attacks} attacks, {team2_goals} goals, {team1_saves} misses")
+
+                print("\n--- Penalty Statistics ---")
+                print(f"{team1_sim.name}: {penalty_stats[team1_sim.name]['awarded']} awarded, {penalty_stats[team1_sim.name]['scored']} scored")
+                print(f"{team2_sim.name}: {penalty_stats[team2_sim.name]['awarded']} awarded, {penalty_stats[team2_sim.name]['scored']} scored")
+
+                print("\n--- Match Highlights ---")
+                for h in highlights:
+                    print(h)
+                return (team1_score, team2_score, None, time)
 
         # Snitch logic 
         if total_seeker_skill > 0:
@@ -164,7 +192,7 @@ def simulate_match(team1, team2):
             highlights.append(f"{time}': {defending.name} makes a big save!")
 
         # Check for strategic timeout
-        if attack_counter == next_strategic_timeout_attack:
+        if not time_limit and attack_counter == next_strategic_timeout_attack:
             if random.random() < 0.20:  # 20% chance
                 timeout_count += 1
                 # Who calls it?
@@ -266,10 +294,7 @@ def simulate_match(team1, team2):
     # Output results
     print("\n--- Match Result ---")
     print(f"{team1_sim.name}: {team1_score} - {team2_sim.name}: {team2_score}")
-    if snitch_catcher:
-        print(f"Snitch caught by: {snitch_catcher}")
-    else:
-        print("Snitch was not caught (time ran out).")
+    print(f"Snitch caught by: {snitch_catcher}")
     print(f"Total match time: {time} minutes")
 
     print("\n--- Match Statistics ---")
@@ -284,4 +309,4 @@ def simulate_match(team1, team2):
     for h in highlights:
         print(h)
 
-    return (team1_score, team2_score, snitch_catcher)
+    return (team1_score, team2_score, snitch_catcher, time)

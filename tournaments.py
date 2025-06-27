@@ -59,7 +59,7 @@ def tournament_4_teams():
         # Simulate the match 
         print(f"\nSimulating: {a} vs {b}")
         # Capture scores 
-        team1_score, team2_score, _ = simulate_match(team1, team2)
+        team1_score, team2_score, _, _ = simulate_match(team1, team2)
         # Decide points
         if team1_score > team2_score:
             results[a]["points"] += 1
@@ -132,7 +132,6 @@ def pick_random_teams_by_continent(n_teams, filename="world_population.csv"):
 # --- GROUP STAGE LOGIC ---
 def round_robin_group(group_names, teams_dict):
     results = {name: {"points": 0, "scored": 0, "conceded": 0, "diff": 0} for name in group_names}
-    matches = []
     schedule = [
         (0, 1), (2, 3), (3, 1), (0, 2), (2, 1), (0, 3)
     ]
@@ -143,7 +142,7 @@ def round_robin_group(group_names, teams_dict):
         name_b = team_indices[b]
         input(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
         t1, t2 = teams_dict[name_a], teams_dict[name_b]
-        s1, s2, snitch_catcher = simulate_match(t1, t2)
+        s1, s2, snitch_catcher, _ = simulate_match(t1, t2)
         print(f"  {name_a} {s1} - {s2} {name_b}  (Snitch: {snitch_catcher})")
         # Points
         if s1 > s2:
@@ -160,14 +159,75 @@ def round_robin_group(group_names, teams_dict):
         results[name_b]["scored"] += s2
         results[name_b]["conceded"] += s1
         results[name_b]["diff"] = results[name_b]["scored"] - results[name_b]["conceded"]
-        matches.append((name_a, s1, name_b, s2, snitch_catcher))
-        print("\nCurrent standings:")
+        if a == 0 and b == 3:
+            print("\nFinal group standings:")
+        else:
+            print("\nCurrent standings:")
         for i, (name, stats) in enumerate(sorted(results.items(), key=lambda x: (-x[1]['points'], -x[1]['diff'], -x[1]['scored'])), 1):
             print(f" {i}. {name} ({stats['points']} pts, {stats['diff']} diff, {stats['scored']} for, {stats['conceded']} conceded)")
     # Sort teams: points, diff, scored
     sorted_teams = sorted(results.items(), key=lambda x: (-x[1]["points"], -x[1]["diff"], -x[1]["scored"]))
     # Return first and second place
-    return [sorted_teams[0][0], sorted_teams[1][0]], matches, results
+    return [sorted_teams[0][0], sorted_teams[1][0]] #, matches, results
+
+def cannon_group(group_names, teams_dict):
+    results = {name: {"points": 0, "scored": 0, "conceded": 0, "diff": 0, "snitches caught": 0, "total snitch catching time": 0} for name in group_names}
+    schedule = [
+        (0, 1), (2, 3), (3, 1), (0, 2), (2, 1), (0, 3)
+    ]
+    team_indices = {i: name for i, name in enumerate(group_names)}
+    print(f"\n-- Group: {', '.join(group_names)} --")
+    for a, b in schedule:
+        name_a = team_indices[a]
+        name_b = team_indices[b]
+        input(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
+        t1, t2 = teams_dict[name_a], teams_dict[name_b]
+        s1, s2, snitch_catcher, match_time = simulate_match(t1, t2, 240)
+        if snitch_catcher:
+            print(f"  {name_a} {s1} - {s2} {name_b}  (Snitch: {snitch_catcher})")
+            results[snitch_catcher]["snitches caught"] += 1
+            results[snitch_catcher]["total snitch catching time"] += match_time
+        else:
+            print(f"  {name_a} {s1} - {s2} {name_b}  (Match is concluded with no snitch caught)")
+        # Points
+        if s1 > s2:
+            results[name_a]["points"] += 2
+            if s1 - s2 > 150:
+                results[name_a]["points"] += 5
+            elif s1 - s2 > 100:
+                results[name_a]["points"] += 3
+            elif s1 - s2 > 50:
+                results[name_a]["points"] += 1
+        elif s2 > s1:
+            results[name_b]["points"] += 2
+            if s2 - s1 > 150:
+                results[name_b]["points"] += 5
+            elif s2 - s1 > 100:
+                results[name_b]["points"] += 3
+            elif s2 - s1 > 50:
+                results[name_b]["points"] += 1
+        else:
+            results[name_a]["points"] += 1
+            results[name_b]["points"] += 1
+
+        #Goals for/against
+        results[name_a]["scored"] += s1
+        results[name_a]["conceded"] += s2
+        results[name_a]["diff"] = results[name_a]["scored"] - results[name_a]["conceded"]
+        results[name_b]["scored"] += s2
+        results[name_b]["conceded"] += s1
+        results[name_b]["diff"] = results[name_b]["scored"] - results[name_b]["conceded"]
+
+        if a == 0 and b == 3:
+            print("\nFinal group standings:")
+        else:
+            print("\nCurrent standings:")
+        for i, (name, stats) in enumerate(sorted(results.items(), key=lambda x: (-x[1]['points'], -x[1]['snitches caught'], x[1]['total snitch catching time'], -x[1]['diff'], -x[1]['scored'])), 1):
+            print(f" {i}. {name} ({stats['points']} pts, {stats['snitches caught']} snitches caught in the total of {stats['total snitch catching time']} minutes, {stats['diff']} diff, {stats['scored']} for, {stats['conceded']} conceded)")
+    # Sort teams: points, diff, scored
+    sorted_teams = sorted(results.items(), key=lambda x: (-x[1]["points"], -x[1]['snitches caught'], x[1]['total snitch catching time'], -x[1]["diff"], -x[1]["scored"]))
+    # Return first place and points
+    return (sorted_teams[0][0], results[sorted_teams[0][0]])
 
 # --- PLAYOFFS LOGIC ---
 def playoff_bracket(group_winners, group_runners_up, teams_dict):
@@ -186,7 +246,7 @@ def playoff_bracket(group_winners, group_runners_up, teams_dict):
         next_round = []
         for t1, t2 in pairs:
             print(f"{t1} vs {t2}")
-            s1, s2, snitch_catcher = simulate_match(teams_dict[t1], teams_dict[t2])
+            s1, s2, snitch_catcher, _ = simulate_match(teams_dict[t1], teams_dict[t2])
             print(f"  Result: {t1} {s1} - {s2} {t2}  (Snitch: {snitch_catcher})")
             if s1 > s2:
                 winner = t1
@@ -228,7 +288,25 @@ def build_split_bracket_pairs(group_winners, group_runners_up):
         pairs.append((group_winners[i], group_runners_up[i-1]))
     return pairs
 
-def run_tournament(num_teams):
+def get_bracket_order(n):
+    if n == 2:
+        return [0, 1]
+    prev = get_bracket_order(n // 2)
+    order = []
+    for x in prev:
+        order.append(x)
+        order.append(n - 1 - x)
+    return order
+
+def build_ranked_pairs(group_winners_points):
+    sorted_winners = sorted(group_winners_points.items(), key=lambda x: (-x[1]["points"], -x[1]['snitches caught'], x[1]['total snitch catching time'], -x[1]["diff"], -x[1]["scored"]))
+    n = len(sorted_winners)
+    temp_pairs = [(sorted_winners[i][0], sorted_winners[n - 1 - i][0]) for i in range(n // 2)]
+    order = get_bracket_order(len(temp_pairs))
+    result = [temp_pairs[i] for i in order]
+    return result
+
+def run_tournament(num_teams, fifa_style = True):
     print(f"\n=== QUIDDITCH WORLD CUP: {num_teams} TEAMS ===")
     team_names = pick_random_teams_by_continent(num_teams)
     random.shuffle(team_names)
@@ -245,21 +323,25 @@ def run_tournament(num_teams):
     # GROUP STAGE
     group_winners = []
     group_runners_up = []
-    group_results = []
+    group_winners_points = {}
     for idx, group in enumerate(groups, 1):
         input(f"\nPress Enter to simulate all matches in GROUP {idx} ({', '.join(group)}):")
         print(f"\n===== GROUP {idx} =====")
-        top2, matches, standings = round_robin_group(group, teams_dict)
-        group_winners.append(top2[0])
-        group_runners_up.append(top2[1])
-        group_results.append((group, matches, standings))
-        print("\nFinal group standings:")
-        for i, (name, stats) in enumerate(sorted(standings.items(), key=lambda x: (-x[1]['points'], -x[1]['diff'], -x[1]['scored'])), 1):
-            print(f" {i}. {name} ({stats['points']} pts, {stats['diff']} diff, {stats['scored']} for, {stats['conceded']} conceded)")
+
+        if fifa_style:
+            top2 = round_robin_group(group, teams_dict)
+            group_winners.append(top2[0])
+            group_runners_up.append(top2[1])
+        else:
+            top1, results = cannon_group(group, teams_dict)
+            group_winners_points[top1] = results
 
     # PLAYOFFS
     print("\nAll group stages complete! Advancing to the playoffs!")
-    pairs = build_split_bracket_pairs(group_winners, group_runners_up)
+    if fifa_style:
+        pairs = build_split_bracket_pairs(group_winners, group_runners_up)
+    else:
+        pairs = build_ranked_pairs(group_winners_points)
 
     round_names = []
     if len(pairs) == 16:
@@ -268,8 +350,11 @@ def run_tournament(num_teams):
         round_names = ["Round of 16", "Quarterfinals", "Semifinals", "Finals"]
     elif len(pairs) == 4:
         round_names = ["Quarterfinals", "Semifinals", "Finals"]
+    elif len(pairs) == 2:
+        round_names = ["Semifinals", "Finals"]
     else:
-        ValueError("Invalid number of teams in playoffs.")
+        print("Invalid number of teams in playoffs.")
+        return
 
     round_idx = 0
     while True:
@@ -279,7 +364,7 @@ def run_tournament(num_teams):
         next_round = []
         for idx, (t1, t2) in enumerate(pairs, 1):
             input(f"Press Enter to simulate {round_title} Match {idx}: {t1} vs {t2}...")
-            s1, s2, snitch_catcher = simulate_match(teams_dict[t1], teams_dict[t2])
+            s1, s2, snitch_catcher, _ = simulate_match(teams_dict[t1], teams_dict[t2])
             print(f"  Result: {t1} {s1} - {s2} {t2}  (Snitch: {snitch_catcher})")
             if s1 > s2:
                 winner = t1
