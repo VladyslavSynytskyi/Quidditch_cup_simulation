@@ -101,9 +101,9 @@ def load_countries_by_continent(filename):
 def get_team_allocation(n_teams):
     allocation = {
         "Oceania": round(n_teams * 0.05),
-        "North America": round(n_teams * 0.10),
+        "North America": round(n_teams * 0.08),
         "South America": round(n_teams * 0.10),
-        "Africa": round(n_teams * 0.10),
+        "Africa": round(n_teams * 0.12),
         "Asia": round(n_teams * 0.25)
     }
     # Rest goes to Europe
