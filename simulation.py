@@ -125,7 +125,7 @@ def simulate_match(team1, team2, time_limit = None):
                     continue
 
         # -- Timeout break logic (only for Cloudy, Sunny, Rainy) --
-        if next_timeout_break and attack_counter > 0 and attack_counter % next_timeout_break == 0:
+        if next_timeout_break and attack_counter > 0 and attack_counter % next_timeout_break == 0 and (time_limit is None or time + timeout_break_length < time_limit):
             if condition == "Cloudy":
                 if random.random() < 0.05:
                     time += timeout_break_length
