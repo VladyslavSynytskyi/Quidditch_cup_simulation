@@ -140,8 +140,18 @@ def round_robin_group(group_names, teams_dict):
     for a, b in schedule:
         name_a = team_indices[a]
         name_b = team_indices[b]
-        input(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
+        print(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
         t1, t2 = teams_dict[name_a], teams_dict[name_b]
+        
+        print("\n--- Initial Skills ---")
+        print(f"\n{t1.name}:")
+        for p in t1.players:
+            print(f"{p.name}: {p.skill}")
+        print(f"\n{t2.name}:")
+        for p in t2.players:
+            print(f"{p.name}: {p.skill}")
+        input()
+
         s1, s2, snitch_catcher, _ = simulate_match(t1, t2)
         print(f"  {name_a} {s1} - {s2} {name_b}  (Snitch: {snitch_catcher})")
         # Points
@@ -180,8 +190,18 @@ def cannon_group(group_names, teams_dict):
     for a, b in schedule:
         name_a = team_indices[a]
         name_b = team_indices[b]
-        input(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
+        print(f"\nPress Enter to simulate match: {name_a} vs {name_b}...")
         t1, t2 = teams_dict[name_a], teams_dict[name_b]
+        
+        print("\n--- Initial Skills ---")
+        print(f"\n{t1.name}:")
+        for p in t1.players:
+            print(f"{p.name}: {p.skill}")
+        print(f"\n{t2.name}:")
+        for p in t2.players:
+            print(f"{p.name}: {p.skill}")
+        input()
+
         s1, s2, snitch_catcher, match_time = simulate_match(t1, t2, 240)
         if snitch_catcher:
             print(f"  {name_a} {s1} - {s2} {name_b}  (Snitch: {snitch_catcher})")

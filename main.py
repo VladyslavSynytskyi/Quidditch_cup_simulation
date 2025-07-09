@@ -167,7 +167,7 @@ def main():
             if number_of_teams == 4:
                 tournament_4_teams()
             else:
-                style =input("Do you want to run the group stage in FIFA style or Cannon style? (fifa/cannon): ")
+                style = input("Do you want to run the group stage in FIFA style or Cannon style? (fifa/cannon): ").strip().lower()
                 if style == "fifa":
                     run_tournament(number_of_teams, True)
                 elif style == "cannon":
