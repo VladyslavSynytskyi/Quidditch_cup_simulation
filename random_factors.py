@@ -103,13 +103,13 @@ def apply_injuries(team1, team2):
 
     return result, f"{num_injuries} player(s) injured: {', '.join(descs)}"
 
-def apply_bludger_mayhem():
-    # 10% chance for Bludger Mayhem
+def apply_bludger_calmness():
+    # 10% chance for Bludger Calmness
     if random.random() < 0.10:
-        desc = "Bludger Mayhem: The match is chaotic and fast! Time steps reduced to 1-3 minutes."
+        desc = "Bludger Calmness: The bludgers are calmer than usual! Time steps reduced to 1-3 minutes."
         return (1, 3), desc
     else:
-        return (1, 5), "No bludger mayhem: Normal match pace."
+        return (1, 5), "No Bludger Calmness: Normal match pace."
     
 def apply_coach_strategy(team1, team2):
     result = {}
@@ -216,8 +216,8 @@ def apply_all_factors(team1, team2):
     for pid, delta in injuries_result.items():
         player_deltas[pid].append(delta)
 
-    # Bludger mayhem
-    time_range, bludger_desc = apply_bludger_mayhem()
+    # Bludger calmness
+    time_range, bludger_desc = apply_bludger_calmness()
     descriptions.append(bludger_desc)
 
     # Coach game-plan
